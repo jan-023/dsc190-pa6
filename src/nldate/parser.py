@@ -228,12 +228,17 @@ def parse(s: str, today: date | None = None) -> date:
     s = s.strip().lower()
     s = re.sub(r"\s+", " ", s)
 
+    # Special fixed phrases
     if s == "today":
         return today
     if s == "yesterday":
         return today - timedelta(days=1)
     if s == "tomorrow":
         return today + timedelta(days=1)
+    if s in {"the day after tomorrow"}:
+        return today + timedelta(days=2)
+    if s in {"the day before yesterday"}:
+        return today - timedelta(days=2)
 
     # Input includes number of days difference, written as a scalar
     match = re.match(r"(.+)\s+from now", s)
