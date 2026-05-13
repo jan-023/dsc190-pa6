@@ -152,7 +152,7 @@ def _add_years(d: date, years: int) -> date:
 
 
 def _parse_duration(s: str) -> dict[str, int]:
-    parts = re.findall(r"(\d+)\s+(days?|months?|years?)", s)
+    parts = re.findall(r"(\d+)\s+(days?|weeks?|months?|years?)", s)
 
     if not parts:
         raise ValueError("Invalid duration")
@@ -168,6 +168,8 @@ def _parse_duration(s: str) -> dict[str, int]:
 
         if unit.startswith("day"):
             duration["days"] += value
+        elif unit.startswith("week"):
+            duration["days"] += value * 7
         elif unit.startswith("month"):
             duration["months"] += value
         elif unit.startswith("year"):
