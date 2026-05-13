@@ -28,6 +28,11 @@ def test_yesterday_date_not_provided():
 def test_tomorrow_date_provided():
     assert parse(s="tomorrow", today=date(1998, 12, 31)) == date(1999, 1, 1)
 
+def test_day_after_tomorrow():
+    assert parse(s="the day after tomorrow", today=date(2025, 5, 13)) == date(2025, 5, 15)
+
+def test_day_before_yesterday():
+    assert parse(s="the day before yesterday", today=date(2025, 5, 13)) == date(2025, 5, 11)
 
 # Testing "X days" difference inputs
 def test_in_X_days():
@@ -38,25 +43,37 @@ def test_X_days_ago():
     assert parse(s="10 days ago") == date.today() - timedelta(days=10)
 
 
+def test_in_2_weeks():
+    assert parse(s="in 2 weeks", today=date(2025, 5, 13)) == date(2025, 5, 27)
+
+
+def test_in_a_week():
+    assert parse(s="in a week", today=date(2025, 5, 13)) == date(2025, 5, 20)
+
+
+def test_two_weeks_ago():
+    assert parse(s="two weeks ago", today=date(2025, 5, 13)) == date(2025, 4, 29)
+
+def test_2_weeks_from_now():
+    assert parse(s="2 weeks from now", today=date(2025, 5, 13)) == date(2025, 5, 27)
+
 # Testing inputs that tell a specific weekday relative to today
 """
 def test_next_monday_from_monday():
-    assert parse(s = "next Monday",
-                 today = date(2025, 5, 12)) == date(2025, 5, 18)
+    assert parse(s="next Monday", today=date(2025, 5, 12)) == date(2025, 5, 18)
+
 
 def test_next_monday_from_friday():
-    assert parse(s = "next Monday",
-                 today = date(2025, 5, 12)) == date(2025, 5, 18)
+    assert parse(s="next Monday", today=date(2025, 5, 12)) == date(2025, 5, 18)
+
 
 def test_last_friday_from_friday():
-    assert parse(s = "last friday ", 
-                 today = date(2025, 5, 8)) == date(2025, 5, 1)
+    assert parse(s="last friday ", today=date(2025, 5, 8)) == date(2025, 5, 1)
+
 
 def test_last_friday_from_saturday():
-    assert parse(s = "last  friday",
-                 today = date(2025, 5, 9)) == date(2025, 5, 1)
+    assert parse(s="last  friday", today=date(2025, 5, 9)) == date(2025, 5, 1)
 """
-
 
 # Testing inputs that write out the month in English
 def test_full_month_name_mmddyy():
