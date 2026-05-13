@@ -150,35 +150,32 @@ def _add_years(d: date, years: int) -> date:
         # Feb 29 -> Feb 28 fallback
         return d.replace(month=2, day=28, year=d.year + years)
 
-
 def _parse_duration(s: str) -> dict[str, int]:
-    parts = re.findall(r"(\d+)\s+(days?|weeks?|months?|years?)", s)
+    s = s.strip().lower()
+    s = re.sub(r"\s+", " ", s)
+
+    parts = re.findall(r"(a|\d+)\s+(day|week|month|year)s?", s)
 
     if not parts:
-        raise ValueError("Invalid duration")
+        raise ValueError(f"Invalid duration: {s}")
 
-    duration = {
-        "days": 0,
-        "months": 0,
-        "years": 0,
-    }
+    duration = {"days": 0, "months": 0, "years": 0}
 
     for value, unit in parts:
-        value = int(value)
+        value = 1 if value == "a" else int(value)
 
-        if unit.startswith("day"):
+        if unit == "day":
             duration["days"] += value
-        elif unit.startswith("week"):
+        elif unit == "week":
             duration["days"] += value * 7
-        elif unit.startswith("month"):
+        elif unit == "month":
             duration["months"] += value
-        elif unit.startswith("year"):
+        elif unit == "year":
             duration["years"] += value
 
     return duration
 
-
-def parse_in_or_ago(s: str, today: date) -> date | None:
+def _parse_in_or_ago(s: str, today: date) -> date | None:
     match = re.match(r"in\s+(.+)", s)
     if match:
         duration = _parse_duration(match.group(1))
@@ -215,7 +212,7 @@ def parse(s: str, today: date | None = None) -> date:
         return today + timedelta(days=1)
 
     # Input includes number of days difference, written as a scalar
-    result = parse_in_or_ago(s, today)
+    result = _parse_in_or_ago(s, today)
     if result is not None:
         return result
 
