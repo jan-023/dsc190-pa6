@@ -197,14 +197,14 @@ def parse(s: str, today: date | None = None) -> date:
             return today - timedelta(days=days_back)
 
     # Input includes years, months, days and month written out
-    match = _parse_relative_expression(s, today)
-    if match is not None:
-        return match
+    result = _parse_relative_expression(s, today)
+    if result is not None:
+        return result
 
 
     # Input is solely date with month written out
-    match = _parse_absolute_date(s)
-    if match is not None:
-        return match
+    result = _parse_absolute_date(s)
+    if result is not None:
+        return result
 
     raise ValueError(f"Unsupported date expression: {s}")    
