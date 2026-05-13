@@ -176,6 +176,27 @@ def _parse_duration(s: str) -> dict[str, int]:
     return duration
 
 
+def parse_in_or_ago(s: str, today: date) -> date | None:
+    match = re.match(r"in\s+(.+)", s)
+    if match:
+        duration = _parse_duration(match.group(1))
+        sign = 1
+    else:
+        match = re.match(r"(.+)\s+ago", s)
+        if not match:
+            return None
+        duration = _parse_duration(match.group(1))
+        sign = -1
+
+    result = today
+
+    result = _add_years(result, sign * duration["years"])
+    result = _add_months(result, sign * duration["months"])
+    result = result + timedelta(days=sign * duration["days"])
+
+    return result
+
+
 # Main Function
 def parse(s: str, today: date | None = None) -> date:
     if today is None:
@@ -192,15 +213,9 @@ def parse(s: str, today: date | None = None) -> date:
         return today + timedelta(days=1)
 
     # Input includes number of days difference, written as a scalar
-    match = re.match(r"in (\d+) days", s)
-    if match:
-        days = int(match.group(1))
-        return today + timedelta(days=days)
-
-    match = re.match(r"(\d+) days ago", s)
-    if match:
-        days = int(match.group(1))
-        return today - timedelta(days=days)
+    result = parse_in_or_ago(s, today)
+    if result is not None:
+        return result
 
     # Input describes weekdays relative to today
     WEEKDAYS = {
