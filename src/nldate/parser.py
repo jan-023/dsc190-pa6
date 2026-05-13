@@ -154,16 +154,37 @@ def _parse_duration(s: str) -> dict[str, int]:
     s = s.strip().lower()
     s = re.sub(r"\s+", " ", s)
 
-    parts = re.findall(r"(a|\d+)\s+(day|week|month|year)s?", s)
+    parts = re.findall(
+        r"(\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten)\s+"
+        r"(day|week|month|year)s?",
+        s
+    )
 
     if not parts:
         raise ValueError(f"Invalid duration: {s}")
 
+    NUMBER_WORDS = {
+        "a": 1, "an": 1,
+        "one": 1,
+        "two": 2,
+        "three": 3,
+        "four": 4,
+        "five": 5,
+        "six": 6,
+        "seven": 7,
+        "eight": 8,
+        "nine": 9,
+        "ten": 10,
+    }
+
     duration = {"days": 0, "months": 0, "years": 0}
 
     for value, unit in parts:
-        value = 1 if value == "a" else int(value)
-
+        if value in NUMBER_WORDS:
+            value = NUMBER_WORDS[value]
+        else:
+            value = int(value)
+        
         if unit == "day":
             duration["days"] += value
         elif unit == "week":
