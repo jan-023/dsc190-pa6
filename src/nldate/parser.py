@@ -35,6 +35,15 @@ def _clean_day(day_str: str) -> int:
 
 
 def _parse_absolute_date(s: str) -> date | None:
+
+    # allow for dates in yyyy-mm-dd format
+    iso_match = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", s.strip())
+    if iso_match:
+            year = int(iso_match.group(1))
+            month = int(iso_match.group(2))
+            day = int(iso_match.group(3))
+            return date(year, month, day)
+
     # extract year
     year_match = re.search(r"\b(20\d{2})\b", s)
     if not year_match:
