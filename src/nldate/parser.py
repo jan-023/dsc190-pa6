@@ -37,7 +37,7 @@ def _clean_day(day_str: str) -> int:
 def _parse_absolute_date(s: str) -> date | None:
 
     # Handle ISO or slash numeric formats first (YYYY-MM-DD or YYYY/MM/DD)
-    iso_match = re.fullmatch(r"(\d{4})[-/](\d{2})[-/](\d{2})", s.strip())
+    iso_match = re.fullmatch(r"(\d{4})[-/](\d{1,2})[-/](\d{1,2})", s.strip())
     if iso_match:
         year, month, day = map(int, iso_match.groups())
         return date(year, month, day)
